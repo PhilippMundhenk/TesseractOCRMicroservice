@@ -5,7 +5,9 @@ The container returns a PDF document with 300 DPI resolution and all recognized 
 
 ## Example
 ```
-curl -F "userfile=@/home/mundheph/private/repositories/OCR/test.pdf" -H "Expect:" -o output.pdf localhost:8080/index.php
+docker build -t ocr .
+docker run -p8080:80 ocr
+curl -F "userfile=@/tmp/test.pdf" -H "Expect:" -o output.pdf localhost:8080/index.php
 ```
 
 ## Limitations
