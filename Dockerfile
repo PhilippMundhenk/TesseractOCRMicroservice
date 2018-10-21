@@ -24,6 +24,10 @@ RUN mkdir -p /var/www/html/uploads
 RUN chmod -R 777 /var/www/html/uploads
 
 RUN sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 2G/g' /etc/php/7.0/cgi/php.ini
+RUN sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 2G/g' /etc/php/7.0/cli/php.ini
+
+RUN sed -i 's/post_max_size = 8M/post_max_size = 0/g' /etc/php/7.0/cgi/php.ini
+RUN sed -i 's/post_max_size = 8M/post_max_size = 0/g' /etc/php/7.0/cli/php.ini
 
 EXPOSE 80
 
