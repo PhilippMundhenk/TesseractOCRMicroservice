@@ -31,6 +31,7 @@ RUN sed -i 's/post_max_size = 8M/post_max_size = 0/g' /etc/php/7.0/cli/php.ini
 
 EXPOSE 80
 
+ADD index.html /var/www/html
 ADD ocr.php /var/www/html
 ADD policy.xml /etc/ImageMagick-6/
 
