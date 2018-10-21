@@ -16,6 +16,7 @@ if (move_uploaded_file($_FILES['userfile']['tmp_name'], $uploadfile)) {
 $output = shell_exec('convert -density 300 '.$uploadfile.' -depth 8 '.$uploaddir.'/file.tiff');
 $output = shell_exec('cd '.$uploaddir.' && tesseract file.tiff output -l deu pdf hocr');
 
+unlink($uploadfile);
 $attachment_location = $uploaddir.'output.pdf';
 if (file_exists($attachment_location)) {
         header($_SERVER["SERVER_PROTOCOL"] . " 200 OK");
