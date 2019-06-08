@@ -34,5 +34,6 @@ EXPOSE 80
 ADD index.html /var/www/html
 ADD ocr.php /var/www/html
 ADD policy.xml /etc/ImageMagick-6/
+RUN chown -R www-data /var/www/
 
 CMD ["lighttpd", "-D", "-f", "/etc/lighttpd/lighttpd.conf"]

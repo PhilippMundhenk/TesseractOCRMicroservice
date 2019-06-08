@@ -5,7 +5,8 @@ error_reporting(E_ALL);
 
 $uploaddir = '/var/www/html/uploads/';
 $basename = basename($_FILES['userfile']['name']);
-$uploadfile = $uploaddir . $basename;
+$uuid = uniqid();
+$uploadfile = $uploaddir . $basename . $uuid;
 
 if (move_uploaded_file($_FILES['userfile']['tmp_name'], $uploadfile)) {
 } else {
@@ -13,11 +14,11 @@ if (move_uploaded_file($_FILES['userfile']['tmp_name'], $uploadfile)) {
 	die("Error! Internal Server Error");
 }
 
-$output = shell_exec('convert -density 300 '.$uploadfile.' -depth 8 '.$uploaddir.'/file.tiff');
-$output = shell_exec('cd '.$uploaddir.' && tesseract file.tiff output -l deu pdf hocr');
+$output = shell_exec('convert -density 300 '.$uploadfile.' -depth 8 '.$uploaddir.'/'.$uuid.'.tiff');
+$output = shell_exec('cd '.$uploaddir.' && tesseract '.$uuid.'.tiff '.$uuid.'output -l deu pdf hocr');
 
 unlink($uploadfile);
-$attachment_location = $uploaddir.'output.pdf';
+$attachment_location = $uploaddir.$uuid.'output.pdf';
 if (file_exists($attachment_location)) {
         header($_SERVER["SERVER_PROTOCOL"] . " 200 OK");
         header("Cache-Control: public"); // needed for internet explorer
