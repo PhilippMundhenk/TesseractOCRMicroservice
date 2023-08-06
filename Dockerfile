@@ -1,5 +1,7 @@
 FROM ubuntu:22.04
 
+RUN DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get -y install tzdata
+
 RUN apt-get update && apt-get install -y --no-install-recommends apt-utils && apt-get -y clean
 
 RUN apt-get -y update && apt-get -y upgrade && apt-get -y install \
