@@ -10,11 +10,11 @@ $uploadfile = $uploaddir . $basename . $uuid;
 
 if (move_uploaded_file($_FILES['userfile']['tmp_name'], $uploadfile)) {
 } else {
-	http_response_code(500);
-	die("Error! Internal Server Error");
+        http_response_code(500);
+        die("Error! Internal Server Error");
 }
 
-$output = shell_exec('convert -density 300 '.$uploadfile.' -depth 8 -background white -flatten +matte '.$uploaddir.'/'.$uuid.'.tiff');
+$output = shell_exec('convert -density 300 '.$uploadfile.' -depth 8 '.$uploaddir.'/'.$uuid.'.tiff');
 $output = shell_exec('cd '.$uploaddir.' && tesseract '.$uuid.'.tiff '.$uuid.'output -l deu pdf hocr');
 
 unlink($uploadfile);
@@ -25,7 +25,7 @@ if (file_exists($attachment_location)) {
         header("Content-Type: application/zip");
         header("Content-Transfer-Encoding: Binary");
         header("Content-Length:".filesize($attachment_location));
-	header("Content-Disposition: attachment; filename=".$basename."-ocr.pdf");
+        header("Content-Disposition: attachment; filename=".$basename."-ocr.pdf");
         readfile($attachment_location);
         die();
 } else {
