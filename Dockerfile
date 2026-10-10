@@ -2,18 +2,20 @@ FROM ubuntu:22.04
 
 RUN DEBIAN_FRONTEND=noninteractive TZ=Etc/UTC apt-get update && apt-get -y install tzdata && apt-get -y clean
 
-RUN apt-get update && apt-get install -y --no-install-recommends apt-utils && apt-get -y clean
-
-RUN apt-get -y update && apt-get -y upgrade && apt-get -y install \
-        imagemagick \
+# ocrmypdf keeps the original page images and adds a text layer; tesseract
+# language packs: German by default, English comes with tesseract-ocr itself.
+# Add further tesseract-ocr-<lang> packages here to make them available via
+# the "lang" form field.
+RUN apt-get -y update && apt-get -y install --no-install-recommends \
+        ocrmypdf \
         tesseract-ocr \
         tesseract-ocr-deu \
-        wget \
+        ghostscript \
+        poppler-utils \
         lighttpd \
         php-cgi \
-        php-curl \
         && \
-        apt-get -y clean
+        apt-get -y clean && rm -rf /var/lib/apt/lists/*
 
 RUN cp /etc/lighttpd/conf-available/05-auth.conf /etc/lighttpd/conf-enabled/
 RUN cp /etc/lighttpd/conf-available/15-fastcgi-php.conf /etc/lighttpd/conf-enabled/
@@ -31,11 +33,16 @@ RUN sed -i 's/upload_max_filesize = 2M/upload_max_filesize = 2G/g' /etc/php/8.1/
 RUN sed -i 's/post_max_size = 8M/post_max_size = 0/g' /etc/php/8.1/cgi/php.ini
 RUN sed -i 's/post_max_size = 8M/post_max_size = 0/g' /etc/php/8.1/cli/php.ini
 
+# OCR of a many-page document takes a while; do not let PHP give up on it.
+RUN sed -i 's/max_execution_time = 30/max_execution_time = 1800/g' /etc/php/8.1/cgi/php.ini
+
+ENV OCR_LANGUAGE=deu
+ENV OCR_JOBS=2
+
 EXPOSE 80
 
 ADD index.html /var/www/html
 ADD ocr.php /var/www/html
-ADD policy.xml /etc/ImageMagick-6/
 RUN chown -R www-data /var/www/
 
 CMD ["lighttpd", "-D", "-f", "/etc/lighttpd/lighttpd.conf"]
